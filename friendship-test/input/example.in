@@ -1,0 +1,14 @@
+# Sample input file (for HAT-P-10 and the friend reported in Ngo et al. 2015)
+# RA, DEC and error ellipse [mas,mas,deg]
+03:09:28.543	+30:40:24.73
+114 101 90
+# Parallax and (+/-) error [mas]
+8.21692686935 0.293711428521 0.274115113989
+# Proper motion in RA*cos(dec), DEC and error ellipse [mas/yr,mas/yr,deg]
+-4.0 -49.4
+2.9 2.8 90
+
+# Epoch, separation+error[mas], posang+error[deg]; one line per companion
+2455959.74 342.525628619 1.45915559524 214.34001148 0.243842192103
+2456524.13 354.986208173 1.48071665217 215.902244961 0.236787958842
+2456524.13 355.019735656 1.48021070419 215.889726001 0.236651384357

@@ -184,7 +184,7 @@ def main():
     try:
         (opts,args)=getopt.getopt(sys.argv[1:],"h",["help","nstars=","recompute","poster","PAzero","dt=","nmctrials=","titleloc=","titlestr=","nopharo","noprior","nobg"])
     except getopt.GetoptError as err:
-        print str(err) # will print something like "option -a not recognized"
+        print (str(err)) # will print something like "option -a not recognized"
         usage()
         sys.exit(2)
     # Set default values
@@ -394,7 +394,7 @@ def main():
         pickle.dump(bgtrack,fpickle)
         fpickle.close()
     else:
-        print 'Load up pre-computed track for {} from {}'.format(OBJNAME,picklefile)
+        print ('Load up pre-computed track for {} from {}'.format(OBJNAME,picklefile))
         fpickle=open(picklefile,'rb')
         bgtrack=pickle.load(fpickle)
         fpickle.close()
@@ -405,8 +405,8 @@ def main():
         titlestring=custom_title_string
     # Make the plot!
     make_plot(bgtrack,plotfile,titlestring,titlelocstring,no_pharo=NOPHARO,no_prior=NOPRIOR,no_bg=NOBG,for_poster=POSTER_FORMAT)
-    print '| Wrote plot file: {}'.format(plotfile)
-    print '| Wrote plot file: {}'.format(plotfile.replace('.png','.svg'))
+    print ('| Wrote plot file: {}'.format(plotfile))
+    print ('| Wrote plot file: {}'.format(plotfile.replace('.png','.svg')))
     make_data_table(bgtrack,tablefile)
 
 if __name__=="__main__":

@@ -11,24 +11,24 @@ from astropy.coordinates import ICRS, Angle
 import pickle
 
 def usage():
-    print "Usage: run_friendship_test.py [-h] [--help] [--recompute] [--poster] [--PAzero] [--dt value] [--nmctrials value] [--titleloc pos] [--titlestr value] [--nopharo] [--noprior] [--nobg] objname startdate enddate"
-    print "Note: if a pickle file containing computed tracks is available, code will use this instead"
-    print "Required arguments:"
-    print "    objname: name of object; expect inputfile: input/objname.in"
-    print "    startdate: first date to plot/compute (years)"
-    print "    enddate: last date to plot/compute (years)"
-    print "Optional arguments:"
-    print "    -h, --help: prints this help"
-    print "    --recompute: recomputes existing bgtrack object instead of loading from file"
-    print "    --poster: formats plots differently, for display on a poster!"
-    print "    --PAzero: Use for PAs close to 0, will force angles to be -180 to +180 instead"
-    print "    --dt value: resolution of dates plotted, in years [default: 0.05]"
-    print "    --nmctrials value: number of monte carlo draws for confidence intervals [default: 200]"
-    print "    --titleloc pos: position of title string one of: (l[eft],c[entre],r[ight],n[one]) [default: left]"
-    print "    --titlestr value: use a custom title"
-    print "    --nopharo: do not plot our PHARO measurements [default: False]"
-    print "    --noprior: do not plot measurements from prior studies [default: False]"
-    print "    --nobg: do not plot background track (e.g. no proper motion data) [default: False]"
+    print ("Usage: run_friendship_test.py [-h] [--help] [--recompute] [--poster] [--PAzero] [--dt value] [--nmctrials value] [--titleloc pos] [--titlestr value] [--nopharo] [--noprior] [--nobg] objname startdate enddate")
+    print ("Note: if a pickle file containing computed tracks is available, code will use this instead")
+    print ("Required arguments:")
+    print ("    objname: name of object; expect inputfile: input/objname.in")
+    print ("    startdate: first date to plot/compute (years)")
+    print ("    enddate: last date to plot/compute (years)")
+    print ("Optional arguments:")
+    print ("    -h, --help: prints this help")
+    print ("    --recompute: recomputes existing bgtrack object instead of loading from file")
+    print ("    --poster: formats plots differently, for display on a poster!")
+    print ("    --PAzero: Use for PAs close to 0, will force angles to be -180 to +180 instead")
+    print ("    --dt value: resolution of dates plotted, in years [default: 0.05]")
+    print ("    --nmctrials value: number of monte carlo draws for confidence intervals [default: 200]")
+    print ("    --titleloc pos: position of title string one of: (l[eft],c[entre],r[ight],n[one]) [default: left]")
+    print ("    --titlestr value: use a custom title")
+    print ("    --nopharo: do not plot our PHARO measurements [default: False]")
+    print ("    --noprior: do not plot measurements from prior studies [default: False]")
+    print ("    --nobg: do not plot background track (e.g. no proper motion data) [default: False]")
 
 
 def read_input_file(INPUTFILE):
@@ -58,17 +58,13 @@ def read_input_file(INPUTFILE):
     posarr=np.array(fileLines[0].split())
     if posarr.size==2:
         if ':' in posarr[0]: # assume HH:MM:SS DD:MM:SS notation
-            targRA=Angle(posarr[0],u.hour)
-            targDEC=Angle(posarr[1],u.degree)
+            targpos=ICRS(ra=Angle(posarr[0]+' hours'),dec=Angle(posarr[1]+' degrees'))
         else: # assume decimal DEGREES
-            targRA=Angle(posarr[0],u.degree)
-            targDEC=Angle(posarr[1],u.degree)
+            targpos=ICRS(ra=Angle(posarr[0]+' degrees'),dec=Angle(posarr[1]+' degrees'))
     elif posarr.size==6: # HH MM SS DD MM SS
-        targRA=Angle('{}:{}:{}'.format(*posarr[0:3]),u.hour)
-        targDEC=Angle('{}:{}:{}'.format(*posarr[3:6]),u.degree)
+        targpos=ICRS(ra=Angle('{}:{}:{} hours'.format(*posarr[0:3])),dec=Angle('{}:{}:{} degrees'.format(*posarr[3:6])))
     else:
         raise Exception('Input line 1 should contain either 2 or 6 entries')
-    targpos=ICRS(ra=targRA,dec=targDEC)
     # Output RA/DEC as HH:MM:SS and DD:MM:SS strings
     ra=targpos.ra.deg
     dec=targpos.dec.deg
@@ -318,7 +314,7 @@ def main():
     # If not set to recompute and picklefile exists, check to make sure it's correct
     if not RECOMPUTE and os.path.exists(picklefile):
         # Check if pickle file is correct:
-        fpickle=open(picklefile,'r')
+        fpickle=open(picklefile,'rb')
         bgtest=pickle.load(fpickle)
         fpickle.close()
         if epoch_dt != bgtest.dt or ntrials != bgtest.nmctrials or startdate != bgtest.startdate or enddate != bgtest.enddate or refMeas != bgtest.refID or nobs != bgtest.nobs or npriorobs != bgtest.npriorobs:
@@ -394,12 +390,12 @@ def main():
 
         # Create an object for these calculations and pickle them!
         bgtrack=track_data(OBJNAME,epoch_dt,ntrials,startdate,enddate,refMeas,datearr,bg_track_sep,mc68_bg_track_sep,mc95_bg_track_sep,bg_track_pa,mc68_bg_track_pa,mc95_bg_track_pa,obsdates,sep,sep_err,sep_if_bg,pa,pa_err,pa_if_bg,pharo_obsdates,pharo_sep,pharo_sep_err,pharo_sep_if_bg,pharo_pa,pharo_pa_err,pharo_pa_if_bg,prior_obsdates,prior_sep,prior_sep_err,prior_sep_if_bg,prior_pa,prior_pa_err,prior_pa_if_bg,prior_cite)
-        fpickle=open(picklefile,'w')
+        fpickle=open(picklefile,'wb')
         pickle.dump(bgtrack,fpickle)
         fpickle.close()
     else:
         print 'Load up pre-computed track for {} from {}'.format(OBJNAME,picklefile)
-        fpickle=open(picklefile,'r')
+        fpickle=open(picklefile,'rb')
         bgtrack=pickle.load(fpickle)
         fpickle.close()
     # Set plot title

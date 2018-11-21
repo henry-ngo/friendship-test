@@ -99,3 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Internal tests for this repo
+internal_tests/
